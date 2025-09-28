@@ -1,0 +1,19 @@
+[Unit]
+Description=Service application
+After=network.target
+Wants=network.target
+
+[Service]
+Type=exec
+User=
+Group=
+ExecStart=/bin/bash -c 'cd /root/service_app && /root/.local/bin/uv run celery -A app.celery worker --pool=threads -c 2'
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=service_app-app
+
+[Install]
+WantedBy=multi-user.target
