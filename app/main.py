@@ -1,13 +1,13 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from scalar_fastapi import get_scalar_api_reference
-from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
-from slowapi.util import get_remote_address
 
 from app.core.settings import settings
 from app.router.auth_router import auth_router
+from app.utils.limiter import limiter
 
 settings.logger.setup_logger()
 
@@ -16,8 +16,6 @@ app = FastAPI(
     version=settings.app_settings.VERSION,
     description=settings.app_settings.DESCRIPTION,
 )
-
-limiter = Limiter(key_func=get_remote_address, storage_uri=settings.database_settings.REDIS_URL)
 
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)

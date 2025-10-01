@@ -1,12 +1,12 @@
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr, Field
 
 
 class AuthRegister(BaseModel):
-    email: str
-    password: str
-    username: str
+    email: EmailStr
+    password: str = Field(..., min_length=6, max_length=128)
+    username: str = Field(..., min_length=3, max_length=20)
 
 class RegisterResponse(BaseModel):
     id: str

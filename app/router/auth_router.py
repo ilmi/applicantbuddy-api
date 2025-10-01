@@ -1,16 +1,15 @@
-import re
 from datetime import timedelta
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
+from loguru import logger
 from sqlmodel import Session, or_, select
 
 from app.core.settings import settings
 from app.database.engine import db_session
 from app.database.models import User
-from app.main import limiter
 from app.schema.auth import AuthRegister, RegisterResponse, Token, UserResponse
 from app.services import auth_service
 
@@ -20,11 +19,6 @@ auth_router = APIRouter(
     prefix="/auth",
     tags=["Authentication"],
 )
-
-def is_valid_email(email: str) -> bool:
-    # Simple regex for email validation
-    pattern = r"^[\w\.-]+@[\w\.-]+\.\w+$"
-    return re.match(pattern, email) is not None
 
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], session: Session = Depends(db_session)):
     credentials_exception = HTTPException(
@@ -45,10 +39,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], sessio
     return user
 
 @auth_router.post("/register", response_model=RegisterResponse, status_code=status.HTTP_201_CREATED)
-@limiter.limit("5/minute")
-async def register_user(user_data: AuthRegister, session: Session = Depends(db_session)):
-    if not is_valid_email(user_data.email):
-        raise HTTPException(status_code=400, detail="Invalid email address")
+async def register_user(request: Request, user_data: AuthRegister, session: Session = Depends(db_session)):
     user_is_registered = session.exec(select(User).where(User.email == user_data.email)).first()
     if user_is_registered:
         raise HTTPException(status_code=400, detail="Email already registered")
@@ -66,11 +57,11 @@ async def register_user(user_data: AuthRegister, session: Session = Depends(db_s
     session.add(user)
     session.commit()
     session.refresh(user)
+    logger.info(f"New user registered {user.username}")
     return user
 
 @auth_router.post("/login", response_model=Token)
-@limiter.limit("10/minute")
-async def login(form_data: OAuth2PasswordRequestForm = Depends(), session: Session = Depends(db_session)):
+async def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends(), session: Session = Depends(db_session)):
     user = session.exec(
     select(User).where(
         or_(User.email == form_data.username, User.username == form_data.username)
@@ -78,6 +69,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), session: Sessi
 ).first()
 
     if not user or not auth_service.verify_password(form_data.password, user.password_hash):
+        logger.warning(f"Failed login attempt from {form_data.username}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username/email or password",
@@ -87,6 +79,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), session: Sessi
     access_token = auth_service.create_access_token(
         data={"sub": user.email}, expires_delta=access_token_expires
     )
+    logger.info(f"{user.username} logged in")
     return {"access_token": access_token, "token_type": "bearer"}
 
 @auth_router.get("/me", response_model=UserResponse)
