@@ -1,6 +1,6 @@
 import re
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlmodel import Session
 
@@ -20,7 +20,7 @@ def is_valid_email(email: str) -> bool:
     pattern = r"^[\w\.-]+@[\w\.-]+\.\w+$"
     return re.match(pattern, email) is not None
 
-@auth_router.post("/register", response_model=RegisterResponse)
+@auth_router.post("/register", response_model=RegisterResponse, status_code=status.HTTP_201_CREATED)
 def register_user(user_data: AuthRegister, session: Session = Depends(db_session)):
     if not is_valid_email(user_data.email):
         raise HTTPException(status_code=400, detail="Invalid email address")
