@@ -1,4 +1,3 @@
-
 from sqlmodel import Field
 
 from app.core.models import BaseModel
@@ -12,4 +11,3 @@ class User(BaseModel, table=True):
     username: str = Field(unique=True, index=True)
     is_active: bool = Field(default=True)
     role: str = Field(default="user")
-

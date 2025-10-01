@@ -31,9 +31,17 @@ line-length = 120
 lint.select = ["E", "F", "W", "I"]
 lint.ignore = ["E722", "E741", "C901", "E501"]
 target-version = "py312"
+exclude = [
+    "alembic/versions/.*\\.py$",
+    "alembic/env\\.py$"
+]
 
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
 skip-magic-trailing-comma = false
 line-ending = "auto"
+exclude = [
+    "alembic/versions/*.py",
+    "alembic/env.py"
+]

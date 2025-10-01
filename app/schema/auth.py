@@ -8,6 +8,7 @@ class AuthRegister(BaseModel):
     password: str = Field(..., min_length=6, max_length=128)
     username: str = Field(..., min_length=3, max_length=20)
 
+
 class RegisterResponse(BaseModel):
     id: str
     username: str
@@ -16,12 +17,15 @@ class RegisterResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
 
+
 class Token(BaseModel):
     access_token: str
     token_type: str
 
+
 class TokenData(BaseModel):
     email: str | None = None
+
 
 class UserResponse(BaseModel):
     id: str
