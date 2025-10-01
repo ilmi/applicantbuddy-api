@@ -12,6 +12,10 @@ class DatabaseSettings(BaseSettings):
     REDIS_PORT: int = 6379
     REDIS_DB: int = 0
 
+    HASHING_SECRET_KEY: str
+    HASHING_ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+
     @property
     def DATABASE_URL(self):
         return f"postgresql://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"

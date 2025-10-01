@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from scalar_fastapi import get_scalar_api_reference
 
 from app.core.settings import settings
-from app.router.example_router import example_router
+from app.router.auth_router import auth_router
 
 settings.logger.setup_logger()
 
@@ -22,7 +22,7 @@ app.add_middleware(
     allow_headers=settings.app_settings.ALLOW_HEADERS,
 )
 
-app.include_router(example_router)
+app.include_router(auth_router)
 
 if settings.app_settings.DEBUG:
     from fastapi.staticfiles import StaticFiles
