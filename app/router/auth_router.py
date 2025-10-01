@@ -10,6 +10,7 @@ from sqlmodel import Session, or_, select
 from app.core.settings import settings
 from app.database.engine import db_session
 from app.database.models import User
+from app.main import limiter
 from app.schema.auth import AuthRegister, RegisterResponse, Token, UserResponse
 from app.services import auth_service
 
@@ -44,6 +45,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], sessio
     return user
 
 @auth_router.post("/register", response_model=RegisterResponse, status_code=status.HTTP_201_CREATED)
+@limiter.limit("5/minute")
 async def register_user(user_data: AuthRegister, session: Session = Depends(db_session)):
     if not is_valid_email(user_data.email):
         raise HTTPException(status_code=400, detail="Invalid email address")
@@ -67,6 +69,7 @@ async def register_user(user_data: AuthRegister, session: Session = Depends(db_s
     return user
 
 @auth_router.post("/login", response_model=Token)
+@limiter.limit("10/minute")
 async def login(form_data: OAuth2PasswordRequestForm = Depends(), session: Session = Depends(db_session)):
     user = session.exec(
     select(User).where(
