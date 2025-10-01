@@ -1,18 +1,25 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from scalar_fastapi import get_scalar_api_reference
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.middleware import SlowAPIMiddleware
 
 from app.core.settings import settings
-from app.router.example_router import example_router
+from app.router.auth_router import auth_router
+from app.utils.limiter import limiter
 
 settings.logger.setup_logger()
-
 
 app = FastAPI(
     title=settings.app_settings.APP_NAME,
     version=settings.app_settings.VERSION,
     description=settings.app_settings.DESCRIPTION,
 )
+
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_middleware(SlowAPIMiddleware)
 
 app.add_middleware(
     CORSMiddleware,
@@ -22,7 +29,7 @@ app.add_middleware(
     allow_headers=settings.app_settings.ALLOW_HEADERS,
 )
 
-app.include_router(example_router)
+app.include_router(auth_router)
 
 if settings.app_settings.DEBUG:
     from fastapi.staticfiles import StaticFiles

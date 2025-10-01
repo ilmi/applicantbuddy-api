@@ -12,6 +12,10 @@ class Settings(BaseSettings):
     llm_settings: LLMSettings = LLMSettings()
     logger: LoggerSettings = LoggerSettings()
 
+    HASHING_SECRET_KEY: str
+    HASHING_ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
 
