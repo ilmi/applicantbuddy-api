@@ -1,0 +1,2 @@
+2025-10-04 14:00:34 | INFO | app.router.auth_router:register_user:58 | New user registered ilmi
+2025-10-04 14:01:17 | INFO | app.router.auth_router:login:79 | ilmi logged in

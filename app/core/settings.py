@@ -1,6 +1,7 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from app.core.extended_settings.app_settings import AppSettings
+from app.core.extended_settings.cors import CORSSettings
 from app.core.extended_settings.database_settings import DatabaseSettings
 from app.core.extended_settings.llm_settings import LLMSettings
 from app.core.extended_settings.logger_settings import LoggerSettings
@@ -9,7 +10,8 @@ from app.core.extended_settings.logger_settings import LoggerSettings
 class Settings(BaseSettings):
     app_settings: AppSettings = AppSettings()
     database_settings: DatabaseSettings = DatabaseSettings()
-    llm_settings: LLMSettings = LLMSettings()
+    cors: CORSSettings = CORSSettings()
+    llm: LLMSettings = LLMSettings()
     logger: LoggerSettings = LoggerSettings()
 
     HASHING_SECRET_KEY: str = "secret-key"

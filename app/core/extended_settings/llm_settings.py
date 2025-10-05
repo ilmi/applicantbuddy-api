@@ -2,7 +2,10 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class LLMSettings(BaseSettings):
+    """Large Language Model API settings"""
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
-    OPENAI_API_KEY: str = "sk-not-provided"
-    OPENAI_BASE_URL: str = "https://api.openai.com/v1/"
+    OPENAI_API_KEY: str = ""
+    OPENAI_BASE_URL: str = ""
+    MISTRAL_API_KEY: str = ""
+    TAVILY_API_KEY: str = ""
