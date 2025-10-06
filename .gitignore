@@ -11,3 +11,6 @@ wheels/
 
 # Environment variables
 .env
+
+# Docker
+docker-compose.dev.yml

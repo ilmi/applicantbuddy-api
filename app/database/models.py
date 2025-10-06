@@ -24,4 +24,4 @@ class Resume(BaseModel, table=True):
     skills: Optional[List[str]] = Field(default_factory=list, sa_column=Column(JSON))
     strength: Optional[List[str]] = Field(default_factory=list, sa_column=Column(JSON))
 
-    status = ResumeStatus = Field(default=ResumeStatus.PENDING)
+    status: ResumeStatus = Field(default=ResumeStatus.PENDING)
