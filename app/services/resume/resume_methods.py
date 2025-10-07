@@ -60,23 +60,55 @@ def summarize_resume(raw_text: str) -> str:
 
 def extract_resume(raw_text: str):
     SYSTEM_PROMPT = """
-        You are a resume classifier.
-        Your task is to classify the resume text provided.
-        The classification should be one of the following categories:
-        - software_engineer
-        - data_scientist
-        - product_manager
-        - marketing_manager
-        - sales_manager
-        - other
+        You are a resume information extractor.
+        Your task is to extract key information from the resume text provided.
+
+        Extract the following information:
+        - Full name of the person
+        - Email address
+        - Phone number
+        - Address
+        - Category/Job role (classify as one of: software_engineer, data_scientist, product_manager, marketing_manager, sales_manager, other)
+        - Skills (list of technical and professional skills)
+        - Strengths (list of key strengths, maximum 5 words each)
+
+        If any information is not available, provide empty string for strings or empty list for lists.
+        Ensure all fields are properly filled according to the schema.
     """
-    response = openai_client.chat.completions.parse(
-        model="gpt-4o",
-        messages=[
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": f"Resume text: {raw_text}"},
-        ],
-        response_format=ExtractResume,
-    )
-    category = response.choices[0].message.parsed
-    return category.model_dump()
+
+    try:
+        response = openai_client.chat.completions.parse(
+            model="gpt-4o",
+            messages=[
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": f"Resume text: {raw_text}"},
+            ],
+            response_format=ExtractResume,
+        )
+
+        if response.choices[0].message.parsed:
+            category = response.choices[0].message.parsed
+            return category.model_dump()
+        else:
+            # Fallback if parsing fails
+            return {
+                "full_name": "",
+                "email": "",
+                "phone": "",
+                "address": "",
+                "category": "other",
+                "skills": [],
+                "strength": [],
+            }
+    except Exception as e:
+        # Log the error and return default values
+        print(f"Error extracting resume information: {e}")
+        return {
+            "full_name": "",
+            "email": "",
+            "phone": "",
+            "address": "",
+            "category": "other",
+            "skills": [],
+            "strength": [],
+        }

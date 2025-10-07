@@ -5,7 +5,7 @@ from sqlmodel import SQLModel
 
 from alembic import context
 from app.core.settings import settings
-from app.database.models import Resume, ResumeStatus  #noqa
+from app.database.models import Resume, ResumeStatus  # noqa
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -68,9 +68,7 @@ def run_migrations_online() -> None:
     )
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()

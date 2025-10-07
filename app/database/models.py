@@ -11,6 +11,7 @@ class ResumeStatus(str, Enum):
     PROCESSING = "processing"
     COMPLETED = "completed"
 
+
 class Resume(BaseModel, table=True):
     fullname: Optional[str] = Field("")
     email: Optional[str] = Field("")

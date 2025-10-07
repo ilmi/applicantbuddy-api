@@ -2,20 +2,14 @@ from pydantic import BaseModel, Field
 
 
 class ExtractResume(BaseModel):
-    full_name: str = Field(description="Full name of the person")
-    email: str = Field(description="Email of the person")
-    phone: str = Field(description="Phone number of the person")
-    address: str = Field(description="Address of the person")
-    category: str = Field(description="Category of the resume")
-    skills: list[str] = Field(description="Skills of the person, short and direct")
+    full_name: str = Field(description="Full name of the person", default="")
+    email: str = Field(description="Email of the person", default="")
+    phone: str = Field(description="Phone number of the person", default="")
+    address: str = Field(description="Address of the person", default="")
+    category: str = Field(description="Category of the resume", default="")
+    skills: list[str] = Field(description="Skills of the person, short and direct", default_factory=list)
     strength: list[str] = Field(
-        description="Strength of the person, direct and concise, maximum 5 words each"
-    )
-    weakness: list[str] = Field(
-        description=(
-            "Weakness of the person, direct and concise, maximum 5 words each"
-            "If the person has no weakness, return empty list"
-        )
+        description="Strength of the person, direct and concise, maximum 5 words each", default_factory=list
     )
 
 

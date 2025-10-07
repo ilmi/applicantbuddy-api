@@ -16,18 +16,13 @@ async def get_resume(db: Session = Depends(db_session)):
     resume = db.exec(statement).all()
     return resume
 
+
 @resume_router.post("/")
-async def upload_resume(
-    file: UploadFile,
-    db: Session = Depends(db_session)
-):
+async def upload_resume(file: UploadFile, db: Session = Depends(db_session)):
     contents = await file.read()
     original_filename = file.filename or "tidak_diketahui.pdf"
-    file_extension = os.path.splitext(original_filename)[1]
 
-    resume = Resume(
-        file_name = original_filename, file_path=f"public/resumes/{original_filename}"
-    )
+    resume = Resume(file_name=original_filename, file_path=f"public/resumes/{original_filename}")
     db.add(resume)
     db.commit()
     db.refresh(resume)
@@ -39,6 +34,4 @@ async def upload_resume(
 
     process_resume.delay(resume.id)
 
-    return {
-        "message" : "Resume uploaded successfully"
-    }
+    return {"message": "Resume uploaded successfully"}
