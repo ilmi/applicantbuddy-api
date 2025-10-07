@@ -5,6 +5,7 @@ from sqlmodel import Session, desc, select
 
 from app.database.engine import db_session
 from app.database.models import Resume
+from app.tasks.resume_task import process_resume
 
 resume_router = APIRouter(prefix="/resume", tags=["resume"])
 
@@ -35,6 +36,8 @@ async def upload_resume(
     os.makedirs("public/resumes", exist_ok=True)
     with open(file_path, "wb") as f:
         f.write(contents)
+
+    process_resume.delay(resume.id)
 
     return {
         "message" : "Resume uploaded successfully"
