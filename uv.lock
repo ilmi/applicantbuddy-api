@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.12"
 
 [[package]]
@@ -340,7 +340,7 @@ requires-dist = [
     { name = "fastapi", extras = ["standard"], specifier = ">=0.116.1" },
     { name = "gunicorn", specifier = ">=23.0.0" },
     { name = "loguru", specifier = ">=0.7.3" },
-    { name = "mistralai", specifier = ">=1.9.11" },
+    { name = "mistralai", specifier = ">=1.9.7" },
     { name = "openai", specifier = ">=1.109.1" },
     { name = "openai-agents", specifier = ">=0.3.3" },
     { name = "psycopg2-binary", specifier = ">=2.9.10" },

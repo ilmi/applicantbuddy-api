@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 
 
-class CategorySchema(BaseModel):
+class ExtractResume(BaseModel):
     full_name: str = Field(description="Full name of the person")
     email: str = Field(description="Email of the person")
     phone: str = Field(description="Phone number of the person")

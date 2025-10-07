@@ -1,6 +1,6 @@
 from fastapi import File, HTTPException, UploadFile
 
-from app.services.resume.resume_schema import CategorySchema
+from app.services.resume.resume_schema import ExtractResume
 from app.utils.llm_clients import openai_client
 
 
@@ -76,7 +76,7 @@ def extract_resume(raw_text: str):
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": f"Resume text: {raw_text}"},
         ],
-        response_format=CategorySchema,
+        response_format=ExtractResume,
     )
     category = response.choices[0].message.parsed
     return category.model_dump()
