@@ -24,6 +24,13 @@ async def upload_resume(
     original_filename = file.filename or "tidak_diketahui.pdf"
     file_extension = os.path.splitext(original_filename)[1]
 
+    resume = Resume(
+        file_name = original_filename, file_path=f"public/resumes/{original_filename}"
+    )
+    db.add(resume)
+    db.commit()
+    db.refresh(resume)
+
     file_path = f"public/resumes/{original_filename}"
     os.makedirs("public/resumes", exist_ok=True)
     with open(file_path, "wb") as f:
