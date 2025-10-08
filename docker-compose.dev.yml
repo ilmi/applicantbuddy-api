@@ -27,5 +27,14 @@ services:
     ports:
       - 6379:6379
 
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: qydrant
+    ports:
+      - 6333:6333
+      - 6334:6334
+    volumes:
+      - ./qdrant_storage:/qdrant/storage
+
 volumes:
   pg_data:
